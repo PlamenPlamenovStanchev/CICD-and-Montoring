@@ -1,0 +1,67 @@
+pipeline {
+    agent
+    {
+        label 'docker'
+    }
+    environment {
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        REGISTRY_URL = "192.168.56.12:5000"
+    }
+    stages {
+        stage('Build the API') {
+            when { 
+                changeset "services/api/**" 
+            }
+            steps {
+                sh '''
+				cd services/api
+				docker build -t ${REGISTRY_URL}/task-manager-api:${IMAGE_TAG} .
+				docker push ${REGISTRY_URL}/task-manager-api:${IMAGE_TAG}
+				'''
+            }
+        }
+        stage('Build the Archiver') {
+            when { 
+                changeset "services/archiver/**" 
+            }
+            steps {
+                sh '''
+				cd services/archiver
+				docker build -t ${REGISTRY_URL}/task-manager-archiver:${IMAGE_TAG} .
+				docker push ${REGISTRY_URL}/task-manager-archiver:${IMAGE_TAG}
+				'''
+            }
+        }
+        stage('Build the Frontend') {
+            when { 
+                changeset "services/frontend/**" 
+            }
+            steps {
+                sh '''
+				cd services/frontend
+				docker build -t ${REGISTRY_URL}/task-manager-frontend:${IMAGE_TAG} .
+				docker push ${REGISTRY_URL}/task-manager-frontend:${IMAGE_TAG}
+				'''
+            }
+        }
+        stage('Build the Monitor') {
+            when { 
+                changeset "services/monitor/**" 
+            }
+            steps {
+                sh '''
+				cd services/monitor
+				docker build -t ${REGISTRY_URL}/task-manager-monitor:${IMAGE_TAG} .
+				docker push ${REGISTRY_URL}/task-manager-monitor:${IMAGE_TAG}
+				'''
+            }
+        }
+        stage('Clean')
+        {
+            steps
+            {
+                cleanWs()
+            }
+        }
+    }
+}
