@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: goprom-monitor
+  labels:
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: demo
+  endpoints:
+  - targetPort: 8080
+    path: /metrics
+

@@ -1,0 +1,14 @@
+global:
+  registry: 192.168.56.12:5000
+api:
+  tag: latest
+archiver:
+  tag: latest
+frontend:
+  replicaCount: 3
+  tag: latest
+monitor:
+  tag: latest
+secrets:
+  cli_password: <cli-password>
+  srv_password: <srv-password>
